@@ -11,7 +11,6 @@ From there, just run the server. The players then join in by running their HexNe
 
 ## Included Files
 HexWorldServer.java : The server. Run this on your computer (or wherever) and have users connect to it.  
-Empire.java : Class used frequently in HexWorldServer.java which stores each player's data.  
-HexNet.java : Program used by players to connect to the server. Compatible with other Hexagon java multiplayer games.  
+Empire.java : Class used frequently in HexWorldServer.java which stores each player's data.   
 
 Thanks for playing. 

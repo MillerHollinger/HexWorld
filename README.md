@@ -10,7 +10,7 @@ You will require somewhere to host the server (it runs on java) and as many play
 From there, just run the server. The players then join in by running their HexNet programs, which are compatible with all Hexagon java games. You will need the IP of the host.  
 
 ## Included Files
-HexWorldServer.java : The server. Run this on your computer (or wherever) and have users connect to it.  
+**HexWorldServer.java : The server. Run this on your computer (or wherever) and have users connect to it.**  
 Empire.java : Class used frequently in HexWorldServer.java which stores each player's data.   
 
 [Download HexNet from my repository](https://github.com/MillerHollinger/HexNet)

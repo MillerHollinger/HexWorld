@@ -1,5 +1,5 @@
 # HexWorld
-The HexWorld online LAN java civilization-building game.
+The HexWorld HexNet-compatible java civilization building game.
 In HexWorld, you assume the role of the leader of an empire. Start out with a tiny chunk of land and work your way up to conquering the world. Upgrade your actions, acquire resources, and pick a path for your people. Ward off other players interested in grabbing your land and ally. HexWorld is an open-ended game of world conquest, written entirely in java.
 
 ## How To Play

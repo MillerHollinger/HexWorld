@@ -9,6 +9,7 @@ import java.io.*;
  - Bug testing
  - Server can kick players
  - Tell user exact amounts of spending and earning for all actions
+ - More world territory?
  IDEAS LIST
  - Different territory zones
  - Slower text output (allow user to read)

@@ -258,16 +258,16 @@ public class HexWorldServer {
                                     turnComplete = true;
                                     resolved = true;
                                  } else {
-                                    sendErr("You cannot spend this amount. Try again.");
+                                    sendErr("You cannot spend this amount. Try again."); // input error
                                  }
                               } catch (Exception e) {
-                                 sendErr("Please enter a number only. Try again.");
+                                 sendErr("Please enter a number only. Try again."); // input error
                               }
                            }
                         } else
-                           sendErr("You already have maximum Soldiers {S}.");
+                           sendErr("You already have maximum Soldiers {S}."); // maxed out
                      } else
-                        sendErr("You don't have any Goods (G)! Use Produce to earn Goods (G).");
+                        sendErr("You don't have any Goods (G)! Use Produce to earn Goods (G)."); // cannot afford
                      break;
                   case "Fight":// Fight
                   // Select another empire
@@ -303,17 +303,17 @@ public class HexWorldServer {
                               } else
                               {
                                  if (!target.equalsIgnoreCase(myName))
-                                    sendErr("That Empire does not exist. Try again.");
+                                    sendErr("That Empire does not exist. Try again."); // inexistent empire
                                  else
                                     sendErr("You can't attack yourself!");
                               }
                            } catch (Exception e) {
-                              sendErr("There was an issue getting input. Please try again.");
+                              sendErr("There was an issue getting input. Please try again."); // input error
                            }
                         } else
-                           sendErr("You have no Soldiers {S}! Acquire Soldiers {S} using Train.");
+                           sendErr("You have no Soldiers {S}! Acquire Soldiers {S} using Train."); // cannot afford
                      } else
-                        sendErr("You are under Treaty for " + empires.get(getIndex(myName)).getTreatied()
+                        sendErr("You are under Treaty for " + empires.get(getIndex(myName)).getTreatied() // treatied
                            + " more turn(s) and cannot Fight this turn!");
                      break;
                // Science
@@ -348,16 +348,16 @@ public class HexWorldServer {
                                     turnComplete = true;
                                     resolved = true;
                                  } else {
-                                    sendErr("You cannot spend this amount. Try again.");
+                                    sendErr("You cannot spend this amount. Try again."); // input error
                                  }
                               } catch (Exception e) {
-                                 sendErr("Please enter a number only. Try again.");
+                                 sendErr("Please enter a number only. Try again."); // input error
                               }
                            }
                         } else
-                           sendErr("You already have maximum Data [D].");
+                           sendErr("You already have maximum Data [D]."); // maxed out
                      } else
-                        sendErr("You don't have any Goods (G)! Use Produce to earn Goods (G).");
+                        sendErr("You don't have any Goods (G)! Use Produce to earn Goods (G)."); // cannot afford
                      break;
                // Discover
                   case "Discover":
@@ -390,7 +390,7 @@ public class HexWorldServer {
                                     send("You now have LV " + empires.get(getIndex(myName)).getArmyLv() + " Army.");
                                     turnComplete = true;
                                  } else
-                                    sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
+                                    sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits."); // cannot afford 
                                  break;
                               case "Science":
                                  if (empires.get(getIndex(myName)).upgrade(1)) {
@@ -438,15 +438,15 @@ public class HexWorldServer {
                                     sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
                                  break;
                               default:
-                                 sendErr("The upgrade was not typed correctly. Please assure correct spelling and capitalization and retry.");
+                                 sendErr("The upgrade was not typed correctly. Please assure correct spelling and capitalization and retry."); // input error
                                  break;
                            }
                         } catch (Exception e) {
-                           sendErr("There was an issue getting input. Please try again.");
+                           sendErr("There was an issue getting input. Please try again."); // input error
                         }
                      
                      } else
-                        sendErr("You don't have any Data [D]. Research to earn Data [D].");
+                        sendErr("You don't have any Data [D]. Research to earn Data [D]."); // cannot afford
                      break;
                // Production
                // Produce
@@ -459,7 +459,7 @@ public class HexWorldServer {
                            + empires.get(getIndex(myName)).getGoodsMax());
                         turnComplete = true;
                      } else
-                        sendErr("You already have maximum Goods (G). Pick another action.");
+                        sendErr("You already have maximum Goods (G). Pick another action."); // maxed out
                      break;
                // Trade Deal
                   case "Trade Deal":
@@ -469,7 +469,7 @@ public class HexWorldServer {
                      	&& empires.get(getIndex(myName)).getPower() > 10) {
                         try {
                         // Select another empire
-                           send("Please enter the name of an Empire to buy =T= from.");
+                           send("Please enter the name of an Empire to buy =T= from."); // TODO Shouldn't be able to buy self territory
                            displayEmpires();
                            String target = getInput();
                         // Buy their land
@@ -485,17 +485,18 @@ public class HexWorldServer {
                               empires.get(getIndex(myName)).addAccord(-1 * maxBuy);
                               empires.get(getIndex(myName)).addPower(-1 * maxBuy);
                               send("You bought " + maxBuy + " =T= from the target Empire.");
-                              empires.get(getIndex(myName)).addTerritory(maxBuy);
+                              empires.get(getIndex(myName)).addTerritory(maxBuy / 10);
                               empires.get(getIndex(target))
                                  .addEnemyAction("Trade Deal - Lost " + maxBuy + " =T= - " + myName);
+                              empires.get(getIndex(target)).addTerritory(maxBuy / -10);
                               turnComplete = true;
                            } else
-                              sendErr("That Empire does not exist. Try again.");
+                              sendErr("That Empire does not exist. Try again."); // inexistent empire
                         } catch (Exception e) {
-                           sendErr("There was an issue getting input. Please try again.");
+                           sendErr("There was an issue getting input. Please try again."); // input error
                         }
                      } else
-                        sendErr("You don't have enough (G), #A#, or !P!. You require at least 10 of each.");
+                        sendErr("You don't have enough (G), #A#, or !P!. You require at least 10 of each."); // cannot afford
                      break;
                // Diplomacy
                // Negotiate
@@ -508,7 +509,7 @@ public class HexWorldServer {
                         turnComplete = true;
                      // Accord += [Territory * Diplomacy Level]
                      } else
-                        sendErr("You already have maximum Power !P!. Pick another action.");
+                        sendErr("You already have maximum Power !P!. Pick another action."); // maxed out
                      break;
                // Treaty
                   case "Treaty":
@@ -520,7 +521,7 @@ public class HexWorldServer {
                            displayEmpires();
                            String target = getInput();
                         // Check that Accord > Target's Territory
-                           if (exists(target)) {
+                           if (exists(target)) { // TODO You can currently treaty yourself, also Treaty should cost more - testing/balance required.
                               if (empires.get(getIndex(target))
                               	.treaty(empires.get(getIndex(myName)).getAccord())) {
                               // Target cannot use Fight for the next two turns
@@ -529,14 +530,14 @@ public class HexWorldServer {
                                  empires.get(getIndex(target)).addEnemyAction("Treaty - " + myName);
                                  turnComplete = true;
                               } else
-                                 sendErr("The opposing Empire controls too much =T=. Weaken their control or gain #A#.");
+                                 sendErr("The opposing Empire controls too much =T=. Weaken their control or gain #A#."); // not strong enough
                            } else
-                              sendErr("That Empire does not exist. Try again.");
+                              sendErr("That Empire does not exist. Try again."); // inexistent empire
                         } catch (Exception e) {
-                           sendErr("There was an issue getting input. Please try again.");
+                           sendErr("There was an issue getting input. Please try again."); // input error
                         }
                      } else
-                        sendErr("You don't have enough #A#. You require at least 1.");
+                        sendErr("You don't have enough #A#. You require at least 1."); // cannot afford
                   
                      break;
                // Growth
@@ -549,7 +550,7 @@ public class HexWorldServer {
                         send("You now have " + empires.get(getIndex(myName)).getPower() + " Power !P!.");
                         turnComplete = true;
                      } else
-                        sendErr("You already have maximum Power !P!. Pick another action.");
+                        sendErr("You already have maximum Power !P!. Pick another action."); // maxed out
                      break;
                // Conquer
                   case "Conquer":
@@ -565,9 +566,9 @@ public class HexWorldServer {
                         // Territory += Power / 10 (if there is conquerable land); Power = 0
                            turnComplete = true;
                         } else
-                           sendErr("There is no land in the world to Conquer!");
+                           sendErr("There is no land in the world to Conquer!"); // no land
                      } else
-                        sendErr("You need at least 10 Power !P! to conquer land. Use Govern to gain Power !P!.");
+                        sendErr("You need at least 10 Power !P! to conquer land. Use Govern to gain Power !P!."); // cannot afford
                   
                      break;
                // Development
@@ -603,16 +604,16 @@ public class HexWorldServer {
                                     turnComplete = true;
                                     resolved = true;
                                  } else {
-                                    sendErr("You cannot spend this amount. Try again.");
+                                    sendErr("You cannot spend this amount. Try again."); // input error
                                  }
                               } catch (Exception e) {
-                                 sendErr("Please enter a number only. Try again.");
+                                 sendErr("Please enter a number only. Try again."); // input error
                               }
                            }
                         } else
-                           sendErr("You already have maximum Progress >P>.");
+                           sendErr("You already have maximum Progress >P>."); // maxed out
                      } else
-                        sendErr("You don't have any Goods (G)! Use Produce to earn Goods (G).");
+                        sendErr("You don't have any Goods (G)! Use Produce to earn Goods (G)."); // cannot afford
                      break;
                // Build
                   case "Build":
@@ -651,9 +652,9 @@ public class HexWorldServer {
                                           .getSoldiersMax());
                                        turnComplete = true;
                                     } else
-                                       sendErr("You cannot afford this upgrade. Use Invest to get more >P>.");
+                                       sendErr("You cannot afford this upgrade. Use Invest to get more >P>."); // cannot afford
                                  } else
-                                    sendErr("You cannot upgrade this maximum any further.");
+                                    sendErr("You cannot upgrade this maximum any further."); // maxed stat
                                  break;
                               case "Science":
                                  if (empires.get(getIndex(myName)).getDataMax() < 30000) {
@@ -741,17 +742,17 @@ public class HexWorldServer {
                                     sendErr("You cannot upgrade this maximum any further.");
                                  break;
                               default:
-                                 sendErr("The upgrade was not typed correctly. Please assure correct spelling and capitalization and retry.");
+                            	  sendErr("The upgrade was not typed correctly. Please assure correct spelling and capitalization and retry."); // input error
                                  break;
                            }
                         } catch (Exception e) {
-                           sendErr("There was an issue getting input. Please try again.");
+                           sendErr("There was an issue getting input. Please try again."); // input error
                         }
                      } else
-                        sendErr("You have no Progress >P>! Use Invest to earn Progress.");
+                        sendErr("You have no Progress >P>! Use Invest to earn Progress."); // cannot afford
                      break;
                   default: // Inexistent action entered
-                     sendErr("This action does not exist. Please assure correct spelling and capitalization.");
+                     sendErr("This action does not exist. Please assure correct spelling and capitalization."); // input error
                      break;
                }
             }
@@ -876,7 +877,7 @@ public class HexWorldServer {
                }
                try
                {
-                  Thread.sleep(216000000);
+                  Thread.join();
                } catch (Exception e){empires.remove(getIndex(myName));}
             }
          

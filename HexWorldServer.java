@@ -8,6 +8,7 @@ import java.io.*;
  - More println() server commands
  - Bug testing
  - Server can kick players
+ - Tell user exact amounts of spending and earning for all actions
  IDEAS LIST
  - Different territory zones
  - Slower text output (allow user to read)
@@ -72,7 +73,7 @@ public class HexWorldServer {
       	// Intro
       	// Welcome the user to the game.
          sendSvr("Successfully connected to server!");
-         sendSvr("HexWorld v0.9.8");
+         sendSvr("HexWorld v0.9.9");
          sendSvr("   >By Miller Hollinger");
       	// Offer a tutorial.
          send("Would you like to read the Tutorial? <Yes>/<No>");
@@ -219,7 +220,7 @@ public class HexWorldServer {
                            {
                               empires.remove(getIndex(myName));
                               println("Abandoned Empire "+myName+" was destroyed.");
-                              Thread.sleep(21600000);
+                              Thread.join();
                            }
                         }
                      } catch (Exception m) {

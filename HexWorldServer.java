@@ -7,9 +7,10 @@ import java.io.*;
  - Tutorial
  - More println() server commands
  - Bug testing
- - Kick players
+ - Server can kick players
  IDEAS LIST
- . . .
+ - Different territory zones
+ - Slower text output (allow user to read)
 */
 
 

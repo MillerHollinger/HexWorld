@@ -6,12 +6,12 @@ In HexWorld, you assume the role of the leader of an empire. Start out with a ti
 The instructions to play HexWorld are included with the game.
 
 ## Setup
-You will require somewhere to host the server (it runs on java) and as many players as you like. The game works best with ~6-12 players.
-From there, just run the server. The players then join in by running their HexNet programs, which are compatible with all Hexagon java games. You will need the IP of the host.
+You will require somewhere to host the server (it runs on java) and as many players as you like. The game works best with ~6-12 players.''
+From there, just run the server. The players then join in by running their HexNet programs, which are compatible with all Hexagon java games. You will need the IP of the host.''
 
 ## Included Files
-HexWorldServer.java : The server. Run this on your computer (or wherever) and have users connect to it.
-Empire.java : Class used frequently in HexWorldServer.java which stores each player's data.
-HexNet.java : Program used by players to connect to the server. Compatible with other Hexagon java multiplayer games.
+HexWorldServer.java : The server. Run this on your computer (or wherever) and have users connect to it.''
+Empire.java : Class used frequently in HexWorldServer.java which stores each player's data.''
+HexNet.java : Program used by players to connect to the server. Compatible with other Hexagon java multiplayer games.''
 
 Thanks for playing. 

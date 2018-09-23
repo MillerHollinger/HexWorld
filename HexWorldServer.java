@@ -3,7 +3,7 @@ import java.net.*;
 import java.io.*;
 
 /*
- TODO LIST
+ TO DO LIST
  - Tutorial
  - More println() server commands
  - Bug testing
@@ -69,7 +69,7 @@ public class HexWorldServer {
    	// Use sendSvr(o), sendErr(o), or send(o) to send messages to user.
    	// Use getInput() to get the next line of user input.
    
-   	// TODO The run() function for each thread. The main for each user.
+   	// The run() function for each thread. The main for each user.
       public void run() {
       	// Intro
       	// Welcome the user to the game.
@@ -221,7 +221,7 @@ public class HexWorldServer {
                            {
                               empires.remove(getIndex(myName));
                               println("Abandoned Empire "+myName+" was destroyed.");
-                              Thread.join();
+                              this.join();
                            }
                         }
                      } catch (Exception m) {
@@ -472,13 +472,13 @@ public class HexWorldServer {
                      	&& empires.get(getIndex(myName)).getPower() > 10) {
                         try {
                         // Select another empire
-                           send("Please enter the name of an Empire to buy =T= from."); // TODO Shouldn't be able to buy self territory
+                           send("Please enter the name of an Empire to buy =T= from."); // Shouldn't be able to buy self territory
                            displayEmpires();
                            String target = getInput();
                         // Buy their land
                         // Goods, Accord, Power -= min(Goods, Accord, Power); Territory (taken from
                         // target empire) += min (Goods, Accord, Power) / 10
-                           if (exists(target)) {
+                           if (exists(target)  && !target.equalsIgnoreCase(myName)) {
                               int maxBuy = Math.min(
                                  Math.min(empires.get(getIndex(myName)).getGoods(),
                                  		empires.get(getIndex(myName)).getAccord()),
@@ -493,8 +493,12 @@ public class HexWorldServer {
                                  .addEnemyAction("Trade Deal - Lost " + maxBuy + " =T= - " + myName);
                               empires.get(getIndex(target)).addTerritory(maxBuy / -10);
                               turnComplete = true;
-                           } else
-                              sendErr("That Empire does not exist. Try again."); // inexistent empire
+                           } else {
+                        	   if (!target.equalsIgnoreCase(myName))
+                                   sendErr("That Empire does not exist. Try again."); // inexistent empire
+                                else
+                                   sendErr("You can't attack yourself!");
+                           }
                         } catch (Exception e) {
                            sendErr("There was an issue getting input. Please try again."); // input error
                         }
@@ -524,7 +528,7 @@ public class HexWorldServer {
                            displayEmpires();
                            String target = getInput();
                         // Check that Accord > Target's Territory
-                           if (exists(target)) { // TODO You can currently treaty yourself, also Treaty should cost more - testing/balance required.
+                           if (exists(target)  && !target.equalsIgnoreCase(myName)) { // You can currently treaty yourself, also Treaty should cost more - testing/balance required.
                               if (empires.get(getIndex(target))
                               	.treaty(empires.get(getIndex(myName)).getAccord())) {
                               // Target cannot use Fight for the next two turns
@@ -534,8 +538,12 @@ public class HexWorldServer {
                                  turnComplete = true;
                               } else
                                  sendErr("The opposing Empire controls too much =T=. Weaken their control or gain #A#."); // not strong enough
-                           } else
-                              sendErr("That Empire does not exist. Try again."); // inexistent empire
+                           } else {
+                        	   if (!target.equalsIgnoreCase(myName))
+                                   sendErr("That Empire does not exist. Try again."); // inexistent empire
+                                else
+                                   sendErr("You can't attack yourself!");
+                           }
                         } catch (Exception e) {
                            sendErr("There was an issue getting input. Please try again."); // input error
                         }
@@ -818,7 +826,7 @@ public class HexWorldServer {
             } catch (Exception e) {
             }
          
-         	// TODO Display turn results.
+         	// Display turn results.
             send("Now, the turn results: ");
          	// Display other player's stats.
             displayEmpires();

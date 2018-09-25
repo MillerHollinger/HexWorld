@@ -13,6 +13,6 @@ From there, just run the server. The players then join in by running their HexNe
 **HexWorldServer.java : The server. Run this on your computer (or wherever) and have users connect to it.**  
 Empire.java : Class used frequently in HexWorldServer.java which stores each player's data.   
 
-[Download HexNet from my repository](https://github.com/MillerHollinger/HexNet)
+[Download HexNet from my repository](https://github.com/MillerHollinger/Random)
 
 Thanks for playing. 

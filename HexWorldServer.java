@@ -214,7 +214,7 @@ public class HexWorldServer {
 						in = "";
 						in = getInput();
 					} catch (Exception e) {
-						System.out.println("[!] ERROR WHILE GETTING USER TURN ACTION");
+						System.out.println("[!] ERROR WHILE GETTING USER "+myName+" TURN ACTION");
 						crashes++;
 						sendErr("Unexpected error occurred while getting input. Please retry.");
 						if (crashes > 2)
@@ -235,6 +235,7 @@ public class HexWorldServer {
 					switch (in) {
 					// Army
 					case "Train":// Train Soldiers
+					case "train":
 						if (empires.get(getIndex(myName)).getGoods() > 0) {
 							send("You have decided to Train Soldiers {S}.");
 							if (empires.get(getIndex(myName)).getSoldiers() < empires.get(getIndex(myName))
@@ -277,6 +278,7 @@ public class HexWorldServer {
 							sendErr("You don't have any Goods (G)! Use Produce to earn Goods (G)."); // cannot afford
 						break;
 					case "Fight":// Fight
+					case "fight":
 						// Select another empire
 						send("You have decided to Fight another Empire.");
 						if (empires.get(getIndex(myName)).getTreatied() == 0) {
@@ -325,6 +327,7 @@ public class HexWorldServer {
 					// Science
 					// Research
 					case "Research":
+					case "research":
 						if (empires.get(getIndex(myName)).getGoods() > 0) {
 							send("You have decided to Research Data [D].");
 							if (empires.get(getIndex(myName)).getData() != empires.get(getIndex(myName)).getDataMax()) {
@@ -367,6 +370,7 @@ public class HexWorldServer {
 						break;
 					// Discover
 					case "Discover":
+					case "discover":
 						send("You have decided Discover an action upgrade.");
 						if (empires.get(getIndex(myName)).getData() > 0) {
 							send("Your Data [D] : " + empires.get(getIndex(myName)).getData() + " / "
@@ -391,6 +395,7 @@ public class HexWorldServer {
 								// Upgrade the level of that action
 								switch (getInput()) {
 								case "Army":
+								case "army":
 									if (empires.get(getIndex(myName)).upgrade(0)) {
 										send("Success. Spending [D] to upgrade Army.");
 										send("You now have LV " + empires.get(getIndex(myName)).getArmyLv() + " Army.");
@@ -400,6 +405,7 @@ public class HexWorldServer {
 																																				// afford
 									break;
 								case "Science":
+								case "science":
 									if (empires.get(getIndex(myName)).upgrade(1)) {
 										send("Success. Spending [D] to upgrade Science.");
 										send("You now have LV " + empires.get(getIndex(myName)).getScienceLv()
@@ -409,6 +415,7 @@ public class HexWorldServer {
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
 									break;
 								case "Production":
+								case "production":
 									if (empires.get(getIndex(myName)).upgrade(2)) {
 										send("Success. Spending [D] to upgrade Production.");
 										send("You now have LV " + empires.get(getIndex(myName)).getProductionLv()
@@ -418,6 +425,7 @@ public class HexWorldServer {
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
 									break;
 								case "Diplomacy":
+								case "diplomacy":
 									if (empires.get(getIndex(myName)).upgrade(3)) {
 										send("Success. Spending [D] to upgrade Diplomacy.");
 										send("You now have LV " + empires.get(getIndex(myName)).getDiplomacyLv()
@@ -427,6 +435,7 @@ public class HexWorldServer {
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
 									break;
 								case "Growth":
+								case "growth":
 									if (empires.get(getIndex(myName)).upgrade(4)) {
 										send("Success. Spending [D] to upgrade Growth.");
 										send("You now have LV " + empires.get(getIndex(myName)).getGrowthLv()
@@ -436,6 +445,7 @@ public class HexWorldServer {
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
 									break;
 								case "Development":
+								case "development":
 									if (empires.get(getIndex(myName)).upgrade(5)) {
 										send("Success. Spending [D] to upgrade Development.");
 										send("You now have LV " + empires.get(getIndex(myName)).getDevelopmentLv()
@@ -459,6 +469,7 @@ public class HexWorldServer {
 					// Production
 					// Produce
 					case "Produce":
+					case "produce":
 						send("You have decided to Produce Goods (G).");
 						if (empires.get(getIndex(myName)).getGoods() != empires.get(getIndex(myName)).getGoodsMax()) {
 							// Goods += [Territory * (Produce Level + Pacifist Bonus)]
@@ -474,6 +485,7 @@ public class HexWorldServer {
 						break;
 					// Trade Deal
 					case "Trade Deal":
+					case "trade deal":
 						send("You have decided to make a Trade Deal with another Empire.");
 						if (empires.get(getIndex(myName)).getGoods() > 10
 								&& empires.get(getIndex(myName)).getAccord() > 10
@@ -518,6 +530,7 @@ public class HexWorldServer {
 					// Diplomacy
 					// Negotiate
 					case "Negotiate":
+					case "negotiate":
 						send("You have chosen to Negotiate with other Empires.");
 						if (empires.get(getIndex(myName)).getAccord() < empires.get(getIndex(myName)).getAccordMax()) {
 							empires.get(getIndex(myName)).addAccord(empires.get(getIndex(myName)).getTerritory()
@@ -530,6 +543,7 @@ public class HexWorldServer {
 						break;
 					// Treaty
 					case "Treaty":
+					case "treaty":
 						send("You have decided to Treaty another Empire to stop them from using Fight.");
 						if (empires.get(getIndex(myName)).getAccord() > 0) {
 							try {
@@ -569,6 +583,7 @@ public class HexWorldServer {
 					// Growth
 					// Govern
 					case "Govern":
+					case "govern":
 						send("You have chosen to Govern your Empire.");
 						if (empires.get(getIndex(myName)).getPower() < empires.get(getIndex(myName)).getPowerMax()) {
 							empires.get(getIndex(myName)).addPower(empires.get(getIndex(myName)).getTerritory()
@@ -581,6 +596,7 @@ public class HexWorldServer {
 						break;
 					// Conquer
 					case "Conquer":
+					case "conquer":
 						send("You have chosen to Conquer Territory");
 						if (empires.get(getIndex(myName)).getPower() >= 10) {
 							if (openLand > 0) {
@@ -602,6 +618,7 @@ public class HexWorldServer {
 					// Development
 					// Invest
 					case "Invest":
+					case "invest":
 						if (empires.get(getIndex(myName)).getGoods() > 0) {
 							send("You have decided to Invest Progress >P>.");
 							if (empires.get(getIndex(myName)).getProgress() != empires.get(getIndex(myName))
@@ -645,6 +662,7 @@ public class HexWorldServer {
 						break;
 					// Build
 					case "Build":
+					case "build":
 						send("You are going to Build to increase limits.");
 						if (empires.get(getIndex(myName)).getProgress() > 0) {
 							send("Your Progress >P> : " + empires.get(getIndex(myName)).getProgress() + " / "
@@ -668,6 +686,7 @@ public class HexWorldServer {
 							try {
 								switch (getInput()) {
 								case "Army":
+								case "army":
 									if (empires.get(getIndex(myName)).getSoldiersMax() < 30000) {
 										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
 												.getSoldiersMax()) {
@@ -686,6 +705,7 @@ public class HexWorldServer {
 										sendErr("You cannot upgrade this maximum any further."); // maxed stat
 									break;
 								case "Science":
+								case "science":
 									if (empires.get(getIndex(myName)).getDataMax() < 30000) {
 										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
 												.getDataMax()) {
@@ -703,6 +723,7 @@ public class HexWorldServer {
 										sendErr("You cannot upgrade this maximum any further.");
 									break;
 								case "Production":
+								case "production":
 									if (empires.get(getIndex(myName)).getGoodsMax() < 30000) {
 										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
 												.getGoodsMax()) {
@@ -720,6 +741,7 @@ public class HexWorldServer {
 										sendErr("You cannot upgrade this maximum any further.");
 									break;
 								case "Diplomacy":
+								case "diplomacy":
 									if (empires.get(getIndex(myName)).getAccordMax() < 30000) {
 										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
 												.getAccordMax()) {
@@ -737,6 +759,7 @@ public class HexWorldServer {
 										sendErr("You cannot upgrade this maximum any further.");
 									break;
 								case "Growth":
+								case "growth":
 									if (empires.get(getIndex(myName)).getPowerMax() < 30000) {
 										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
 												.getPowerMax()) {
@@ -754,6 +777,7 @@ public class HexWorldServer {
 										sendErr("You cannot upgrade this maximum any further.");
 									break;
 								case "Development":
+								case "development":
 									if (empires.get(getIndex(myName)).getProgressMax() < 30000) {
 										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
 												.getProgressMax()) {
@@ -782,7 +806,7 @@ public class HexWorldServer {
 							sendErr("You have no Progress >P>! Use Invest to earn Progress."); // cannot afford
 						break;
 					default: // Inexistent action entered
-						sendErr("This action does not exist. Please assure correct spelling and capitalization."); // input
+						sendErr("This action does not exist. Please assure correct spelling."); // input
 																													// error
 						break;
 					}

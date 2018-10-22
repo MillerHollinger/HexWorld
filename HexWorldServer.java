@@ -907,7 +907,7 @@ public class HexWorldServer {
 						}
 					}
 					try {
-						Thread.join();
+						this.interrupt();
 					} catch (Exception e) {
 						empires.remove(getIndex(myName));
 					}

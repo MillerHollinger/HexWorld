@@ -68,6 +68,86 @@ public class HexWorldServer {
 		// Use sendSvr(o), sendErr(o), or send(o) to send messages to user.
 		// Use getInput() to get the next line of user input.
 
+		// The tutorial.
+		public void tutorial() {
+			String[] tutorial = { "Welcome to HexWorld!\n"
+					+ "HexWorld is a civilization-building game where you create an empire and grow its power.\n"
+					+ "Conquer territory, make alliances, and decide what kind of ruler you are.\n"
+					+ "Other empires may be friends or enemies, and you must react quickly and be prepared for anything.\n"
+					+ "This tutorial will teach you how to navigate the game and strategize best so you have the best chance possible in HexWorld.\n"
+					+ "Good luck! The proper tutorial begins on the next page. Just send the word Next to continue.",
+					"First, let's talk input. Almost all input is presented as words in carats : <Word>.\n"
+							+ "When you see something in carats, type just the word into your text bar to select that option. \n"
+							+ "Correct spelling is always required and correct capitalization is occasionally required.\n"
+							+ "So, if you see <Word>, type Word into the text bar.\n"
+							+ "Send <Next> to continue.\n",
+					"Now for the fun stuff. Turns are measured in hexons, with are equal to three years. One hexon is one turn. Every turn, you pick an action. There are six categories and twelve actions, so two actions per category. The categories are:\n"
+							+ "Army: Defend yourself and attack enemies.\n"
+							+ "Science: Research better technologies to gain resources faster.\n"
+							+ "Production: Gain goods which let you pay for some actions or buy land.\n"
+							+ "Diplomacy: Place other empires under Treaty, preventing them from attacking temporarily.\n"
+							+ "Growth: Conquer more territory.\n" + "Development: Store more resources.\n"
+							+ "Each category also has a matching resource.\n" + "Send <Next> to continue.\n",
+					"Every category has a matching, associated resource with its own three-character icon.\n"
+							+ "Army: Soldiers {S}\n" + "Science: Data [D]\n" + "Production: Goods (G)\n"
+							+ "Diplomacy: Accord #A#\n" + "Growth: Power !P!\n" + "Development: Progress >P>\n"
+							+ "Each category has one action that earns the assosciated resource and another that uses it somehow. Some actions may require two or more resource types to function.\n"
+							+ "At the beginning, you can only hold 10 of each; but as you grow that will rapidly change.\n"
+							+ "Send <Next> to continue.\n",
+					"The main goal of the game is to acquire Territory =T=. Territory is limited; there are only 1000 in the world. You can only conquer unowned Territory.\n"
+							+ "Each Territory increases the amount of resources you gain from actions, so get lots of it.\n"
+							+ "At some point, all the Territory may be controlled. You will have to resort to destroying other empires to loosen their control or buy the land directly.\n"
+							+ "Send <Next> to continue.\n",
+					"Now for the actions:\n" + "Army\n"
+							+ "-Train: Spend Goods to get Soldiers. Soldiers defend your empire and attack others.\n"
+							+ "-Fight: Use your Soldiers to attack another empire. If you have more, they lose control of 1/3 of their territory. Regardless of win or lose, 1/3 of your soldiers are lost.\n"
+							+ "Science\n" + "-Research: Spend Goods to get Data. Data is used to Discover.\n"
+							+ "-Discover: Spend Data to upgrade a category, which increases the amount of resources gained for that category. The price increases for each level.\n"
+							+ "Production\n"
+							+ "-Produce: Gain Goods for no cost. Goods are used to buy other resources.\n"
+							+ "-Trade Deal: Spend Goods, Accord, and Power to buy land directly from another empire. This is unblockable.\n"
+							+ "Diplomacy\n"
+							+ "-Negotiate: Gain Accord for no cost. Accord is used to Treaty other players or Trade Deal.\n"
+							+ "-Treaty: Spend Accord to disallow target player from using Fight for two turns. You must have more Accord than they have Territory.\n"
+							+ "Growth\n" + "-Govern: Gain Power for no cost. Power is used to Conquer Territory.\n"
+							+ "-Conquer: Gain Territory for every 10 Power you have. Your Power returns to 0 after Conquer is used.\n"
+							+ "Development\n"
+							+ "-Invest: Spend Goods to get Progress. Progress is used to increase limits.\n"
+							+ "-Build: Spend Progress to increase the limit of one resource. The price increases for each limit boost.\n"
+							+ "Send <Next> to continue.\n",
+					"Every turn, you will pick an action. Then, you wait 5 seconds for time to pass.\n"
+							+ "Your actions change how your empire is aligned. There are four bonuses, which are in two sets of opposites.\n"
+							+ "-: Warmonger: Fight to gain a Warmonger point. +1 Soldier/Territory when Train is used. (Opposite is Pacifist)\n"
+							+ "+: Pacifist: Don't Fight or Train for three turns. +1 Good/Territory when Produce is used. (Opposite is Warmonger)\n"
+							+ "=: Involved: Use Negotiate three times in a row. +1 Progress/Territory when Invest is used. (Opposite is Isolationist)\n"
+							+ "~: Isolationist: Don't use Negotiate for six turns in a row. +1 Data/Territory when Research is used. (Opposite is Involved)\n"
+							+ "Your points are displayed as a series of symbols. 2 Pacifist points plus 3 Involved points equals ++===; 3 Warmonger points only equals ---; 1 Pacifist point and two Isolationist points equals +; etc. \n"
+							+ "Gaining opposite points negates what you already have, e.g. if you have 3 Warmonger points and gain 1 Pacifist point the result is 2 Warmonger points (3 - 1 = 2), if you have 1 Involved point and you gain 2 Isolationist points the result is 1 Isolationist point.\n"
+							+ "You start with no points. They are valuable, complete their requirements for a good bonus reward. You can only have up to 3 of any single bonus, however.\n"
+							+ "Send <Next> to continue.\n",
+					"Your basic strategy is usually this:\n" + "1. Get some Territory.\n"
+							+ "2. Use Territory to earn Goods.\n" + "3. Use Goods to gain Data and Discover.\n"
+							+ "4. Upgrade your actions.\n" + "5. Use Invest and Build to boost limits.\n"
+							+ "Step 6 is up to you -- be diplomatic, fight others, conquer lots of land. Depending on how you play you might never use Negotiate or Fight.\n"
+							+ "Send <Next> to continue.\n",
+					"Whatever you decide to do, I hope you'll enjoy HexWorld.\n"
+							+ "If you catch any bugs, tell them to me, MillerHollinger.\n"
+							+ "The tutorial ends here. Have fun!"
+							+ "Send <Next> to continue.\n"};
+			for (int i = 0; i < tutorial.length; i++)
+			{
+				sendSvr("PAGE " + i + " - - - - - -");
+				sendSvr(tutorial[i]);
+				String in = "";
+				try {
+					in = getInput();
+				} catch (Exception e) {
+				}
+				if (!in.equals("Next"))
+					sendSvr("Close enough...");
+			}
+		}
+
 		// The run() function for each thread. The main for each user.
 		public void run() {
 			// Intro
@@ -84,14 +164,7 @@ public class HexWorldServer {
 					if (in.equalsIgnoreCase("yes") || in.equalsIgnoreCase("y")) {
 						decided = true;
 						sendSvr("Beginning tutorial.");
-						sendSvr("Press ENTER to move to the next page once you finish reading.");
-						sendSvr("1-");
-						sendSvr("Welcome to HexWorld!");
-						sendSvr("HexWorld is a civilization-building game where you create an empire and grow its power.");
-						sendSvr("Conquer territory, make alliances, and decide what kind of ruler you are.");
-						sendSvr("Other empires may be friends or enemies, and you must react quickly and be prepared for anything.");
-						sendSvr("This tutorial will teach you how to navigate the game and strategize best so you have the best chance possible in HexWorld.");
-						sendSvr("Good luck! The proper tutorial begins on the next page. Just send the word Next to continue.");
+						// TODO Tutorial
 
 					} else if (in.equalsIgnoreCase("no") || in.equalsIgnoreCase("n")) {
 						decided = true;
@@ -149,6 +222,12 @@ public class HexWorldServer {
 						send("Land opened up. Now capturing 1 =T=.");
 						openLand--;
 						empires.get(getIndex(myName)).setTerritory(1);
+					}
+					try {
+						Thread.sleep(2000);
+						send("Still looking...");
+					} catch (Exception e) {
+						sendErr("There was an issue trying to get you land. Please restart.");
 					}
 				}
 			} else {
@@ -214,7 +293,7 @@ public class HexWorldServer {
 						in = "";
 						in = getInput();
 					} catch (Exception e) {
-						System.out.println("[!] ERROR WHILE GETTING USER "+myName+" TURN ACTION");
+						System.out.println("[!] ERROR WHILE GETTING USER " + myName + " TURN ACTION");
 						crashes++;
 						sendErr("Unexpected error occurred while getting input. Please retry.");
 						if (crashes > 2)
@@ -807,7 +886,7 @@ public class HexWorldServer {
 						break;
 					default: // Inexistent action entered
 						sendErr("This action does not exist. Please assure correct spelling."); // input
-																													// error
+																								// error
 						break;
 					}
 				}

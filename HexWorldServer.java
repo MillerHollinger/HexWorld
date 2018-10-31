@@ -70,7 +70,7 @@ public class HexWorldServer {
 
 		// The tutorial.
 		public void tutorial() {
-			println(" >  Running tutorial for " + s.toString());
+			println(" >  Running tutorial for " + socket.toString());
 			String[] tutorial = { "Welcome to HexWorld!\n"
 					+ "HexWorld is a civilization-building game where you create an empire and grow its power.\n"
 					+ "Conquer territory, make alliances, and decide what kind of ruler you are.\n"
@@ -206,6 +206,7 @@ public class HexWorldServer {
 					sendErr("An unexpected error occurred. Please restart the program.");
 					try {
 						println("A player in progress of joining has left the game beforing naming.");
+						while (true)
 						Thread.sleep(216000000);
 					} catch (Exception m) {
 					}
@@ -669,8 +670,7 @@ public class HexWorldServer {
 						send("You have chosen to Govern your Empire.");
 						if (empires.get(getIndex(myName)).getPower() < empires.get(getIndex(myName)).getPowerMax()) {
 							empires.get(getIndex(myName)).addPower(empires.get(getIndex(myName)).getTerritory()
-									* empires.get(getIndex(myName)).getGrowthLv() + 10); // DEBUG CHANGE ! ! ! REMOVE !
-																							// ! !
+									* empires.get(getIndex(myName)).getGrowthLv());
 							send("You now have " + empires.get(getIndex(myName)).getPower() + " Power !P!.");
 							turnComplete = true;
 						} else

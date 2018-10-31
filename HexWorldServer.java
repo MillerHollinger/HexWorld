@@ -4,7 +4,6 @@ import java.io.*;
 
 /*
  TO DO LIST
- - Tutorial
  - More println() server commands
  - Bug testing
  - Server can kick players
@@ -60,8 +59,9 @@ public class HexWorldServer {
 				sockets.add(s);
 				printer = new PrintWriter(socket.getOutputStream(), true);
 				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				println(" >  ServerThread " + s.toString() + " created.");
 			} catch (Exception e) {
-				println("[!] ServerThread [" + s.toString() + "] FAIL: CREATION");
+				println("[!] ServerThread " + s.toString() + " Failed to create!");
 			}
 		}
 
@@ -70,6 +70,7 @@ public class HexWorldServer {
 
 		// The tutorial.
 		public void tutorial() {
+			println(" >  Running tutorial for " + s.toString());
 			String[] tutorial = { "Welcome to HexWorld!\n"
 					+ "HexWorld is a civilization-building game where you create an empire and grow its power.\n"
 					+ "Conquer territory, make alliances, and decide what kind of ruler you are.\n"
@@ -164,7 +165,9 @@ public class HexWorldServer {
 					if (in.equalsIgnoreCase("yes") || in.equalsIgnoreCase("y")) {
 						decided = true;
 						sendSvr("Beginning tutorial.");
-						// TODO Tutorial
+						// Tutorial.
+						Thread.sleep(1000);
+						tutorial();
 
 					} else if (in.equalsIgnoreCase("no") || in.equalsIgnoreCase("n")) {
 						decided = true;

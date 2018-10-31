@@ -1,3 +1,5 @@
 /Empire.class
 /HexWorldServer$ServerThread.class
 /HexWorldServer.class
+/HexWorldServer$KickThread.class
+/HexWorldServer$AdminThread.class

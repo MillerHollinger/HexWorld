@@ -3,10 +3,9 @@ import java.net.*;
 import java.io.*;
 
 /*
- TO DO LIST
- - More println() server commands
+ TO-DO LIST
  - Bug testing
- - Server can kick players
+ - AdminThread
  - Tell user exact amounts of spending and earning for all actions
  - More world territory?
  IDEAS LIST
@@ -30,13 +29,28 @@ public class HexWorldServer {
 	public static void main(String[] args) throws Exception {
 		@SuppressWarnings("resource")
 		ServerSocket server = new ServerSocket(6000);
-
+		new AdminThread().start();
 		try {
 			while (true) {
 				new ServerThread(server.accept()).start();
 			}
 		} catch (Exception e) {
 			println("[!] UNEXPECTED CRASH : " + e);
+		}
+	}
+	
+	private static class AdminThread extends Thread {
+		public AdminThread() {}
+		
+		public void run() {
+			println("[A] AdminThread ready.");
+			while(true)
+			{
+				// TODO Ability to:
+				//  Kick players
+				//  Edit values of each player
+				//  Edit world territory
+			}
 		}
 	}
 
@@ -153,6 +167,7 @@ public class HexWorldServer {
 		public void run() {
 			// Intro
 			// Welcome the user to the game.
+			println(" >  Thread executed run().");
 			sendSvr("Successfully connected to server!");
 			sendSvr("HexWorld v0.9.9");
 			sendSvr("   >By Miller Hollinger");
@@ -177,7 +192,7 @@ public class HexWorldServer {
 					}
 				}
 			} catch (Exception e) {
-				System.out.println("[!] ERROR OCCURED WHILE REQUESTING TUTORIAL");
+				println("[!] ERROR OCCURED WHILE REQUESTING TUTORIAL");
 				sendErr("An unexpected error occurred. Skipping tutorial step to prevent crash.");
 			}
 
@@ -191,7 +206,7 @@ public class HexWorldServer {
 			while (!validName) {
 				try {
 					myName = getInput();
-					if (myName.length() < 18) {
+					if (myName.length() < 18 && myName.length() > 0) {
 						validName = true;
 						// Check that the name is not yet used.
 						for (Empire e : empires)
@@ -200,12 +215,12 @@ public class HexWorldServer {
 								sendErr("This name is already taken. Please enter another name.");
 							}
 					} else
-						sendErr("The given name is too long. Use a name less than 18 characters.");
+						sendErr("The given name is not the right size. Use a name less than 18 characters.");
 				} catch (Exception e) {
-					System.out.println("[!] ERROR OCCURED WHILE REQUESTING NAME");
+					println("[!] An error occured during the naming process.");
 					sendErr("An unexpected error occurred. Please restart the program.");
 					try {
-						println("A player in progress of joining has left the game beforing naming.");
+						println("[!] A second error occured during the naming process.");
 						while (true)
 						Thread.sleep(216000000);
 					} catch (Exception m) {
@@ -216,7 +231,7 @@ public class HexWorldServer {
 			empires.add(new Empire(myName));
 
 			send("Your Empire name is accepted. Welcome to the dawn of civilization.");
-
+			println(" >  Empire " + myName + " entered the game.");
 			// Find the user some land.
 			if (openLand == 0) {
 				sendErr("Unfortunately, the entire world has been conquered.");
@@ -238,6 +253,7 @@ public class HexWorldServer {
 				openLand--;
 				empires.get(getIndex(myName)).setTerritory(1);
 			}
+			println(" >  Empire " + myName + " claimed their first =T=.");
 			send("You have claimed 1 =T= for your people.");
 			send("There is " + openLand + " =T= currently unoccupied in the world.");
 			send("Good luck!");
@@ -297,17 +313,17 @@ public class HexWorldServer {
 						in = "";
 						in = getInput();
 					} catch (Exception e) {
-						System.out.println("[!] ERROR WHILE GETTING USER " + myName + " TURN ACTION");
+						System.out.println("[!] Error while getting Empire " + myName + " turn action.");
 						crashes++;
 						sendErr("Unexpected error occurred while getting input. Please retry.");
 						if (crashes > 2)
 							try {
-								println("Empire " + myName + " has left the game.");
+								println(" >  Empire " + myName + " has left the game.");
 								while (true) {
 									Thread.sleep(500);
 									if (empires.get(getIndex(myName)).getTerritory() <= 0) {
 										empires.remove(getIndex(myName));
-										println("Abandoned Empire " + myName + " was destroyed.");
+										println(" >  Abandoned Empire " + myName + " was destroyed.");
 										this.join();
 									}
 								}
@@ -348,6 +364,7 @@ public class HexWorldServer {
 													+ " {S} / " + empires.get(getIndex(myName)).getSoldiersMax());
 											turnComplete = true;
 											resolved = true;
+											println(" >  " + myName + " used Train.");
 										} else {
 											sendErr("You cannot spend this amount. Try again."); // input error
 										}
@@ -392,6 +409,7 @@ public class HexWorldServer {
 										empires.get(getIndex(myName)).addSoldiers(
 												-1 * (empires.get(getIndex(myName)).getSoldiers() / 3) - 1);
 										turnComplete = true;
+										println(" >  " + myName + " used Fight on " + target + ".");
 									} else {
 										if (!target.equalsIgnoreCase(myName))
 											sendErr("That Empire does not exist. Try again."); // inexistent empire
@@ -439,6 +457,7 @@ public class HexWorldServer {
 													+ empires.get(getIndex(myName)).getDataMax());
 											turnComplete = true;
 											resolved = true;
+											println(" >  " + myName + " used Research.");
 										} else {
 											sendErr("You cannot spend this amount. Try again."); // input error
 										}
@@ -483,6 +502,7 @@ public class HexWorldServer {
 										send("Success. Spending [D] to upgrade Army.");
 										send("You now have LV " + empires.get(getIndex(myName)).getArmyLv() + " Army.");
 										turnComplete = true;
+										println(" >  " + myName + " used Discover Army.");
 									} else
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits."); // cannot
 																																				// afford
@@ -494,6 +514,7 @@ public class HexWorldServer {
 										send("You now have LV " + empires.get(getIndex(myName)).getScienceLv()
 												+ " Science.");
 										turnComplete = true;
+										println(" >  " + myName + " used Discover Science.");
 									} else
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
 									break;
@@ -504,6 +525,7 @@ public class HexWorldServer {
 										send("You now have LV " + empires.get(getIndex(myName)).getProductionLv()
 												+ " Production.");
 										turnComplete = true;
+										println(" >  " + myName + " used Discover Production.");
 									} else
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
 									break;
@@ -514,6 +536,7 @@ public class HexWorldServer {
 										send("You now have LV " + empires.get(getIndex(myName)).getDiplomacyLv()
 												+ " Diplomacy.");
 										turnComplete = true;
+										println(" >  " + myName + " used Discover Diplomacy.");
 									} else
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
 									break;
@@ -524,6 +547,7 @@ public class HexWorldServer {
 										send("You now have LV " + empires.get(getIndex(myName)).getGrowthLv()
 												+ " Growth.");
 										turnComplete = true;
+										println(" >  " + myName + " used Discover Growth.");
 									} else
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
 									break;
@@ -534,6 +558,7 @@ public class HexWorldServer {
 										send("You now have LV " + empires.get(getIndex(myName)).getDevelopmentLv()
 												+ " Development.");
 										turnComplete = true;
+										println(" >  " + myName + " used Discover Development.");
 									} else
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
 									break;
@@ -563,6 +588,7 @@ public class HexWorldServer {
 							send("You now have " + empires.get(getIndex(myName)).getGoods() + " (G) / "
 									+ empires.get(getIndex(myName)).getGoodsMax());
 							turnComplete = true;
+							println(" >  " + myName + " used Produce.");
 						} else
 							sendErr("You already have maximum Goods (G). Pick another action."); // maxed out
 						break;
@@ -597,6 +623,7 @@ public class HexWorldServer {
 											.addEnemyAction("Trade Deal - Lost " + maxBuy + " =T= - " + myName);
 									empires.get(getIndex(target)).addTerritory(maxBuy / -10);
 									turnComplete = true;
+									println(" >  " + myName + " used Trade Deal on " + target + ".");
 								} else {
 									if (!target.equalsIgnoreCase(myName))
 										sendErr("That Empire does not exist. Try again."); // inexistent empire
@@ -620,6 +647,7 @@ public class HexWorldServer {
 									* empires.get(getIndex(myName)).getDiplomacyLv());
 							send("You now have " + empires.get(getIndex(myName)).getAccord() + " Accord #A#.");
 							turnComplete = true;
+							println(" >  " + myName + " used Negotiate.");
 							// Accord += [Territory * Diplomacy Level]
 						} else
 							sendErr("You already have maximum Power !P!. Pick another action."); // maxed out
@@ -646,6 +674,7 @@ public class HexWorldServer {
 										send("Succesfully used Treaty. The other Empire cannot use Fight for two turns.");
 										empires.get(getIndex(target)).addEnemyAction("Treaty - " + myName);
 										turnComplete = true;
+										println(" >  " + myName + " used Treaty on " + target + ".");
 									} else
 										sendErr("The opposing Empire controls too much =T=. Weaken their control or gain #A#."); // not
 																																	// strong
@@ -673,6 +702,7 @@ public class HexWorldServer {
 									* empires.get(getIndex(myName)).getGrowthLv());
 							send("You now have " + empires.get(getIndex(myName)).getPower() + " Power !P!.");
 							turnComplete = true;
+							println(" >  " + myName + " used Govern.");
 						} else
 							sendErr("You already have maximum Power !P!. Pick another action."); // maxed out
 						break;
@@ -690,6 +720,7 @@ public class HexWorldServer {
 								empires.get(getIndex(myName)).setPower(0);
 								// Territory += Power / 10 (if there is conquerable land); Power = 0
 								turnComplete = true;
+								println(" >  " + myName + " used Conquer.");
 							} else
 								sendErr("There is no land in the world to Conquer!"); // no land
 						} else
@@ -730,6 +761,7 @@ public class HexWorldServer {
 													+ " >P> / " + empires.get(getIndex(myName)).getProgressMax());
 											turnComplete = true;
 											resolved = true;
+											println(" >  " + myName + " used Invest.");
 										} else {
 											sendErr("You cannot spend this amount. Try again."); // input error
 										}
@@ -750,7 +782,7 @@ public class HexWorldServer {
 							send("Your Progress >P> : " + empires.get(getIndex(myName)).getProgress() + " / "
 									+ empires.get(getIndex(myName)).getProgressMax());
 							// Select an action to research
-							send("What will you research?");
+							send("What will you develop?");
 							send("Max " + empires.get(getIndex(myName)).getSoldiersMax() + " <Army> : "
 									+ empires.get(getIndex(myName)).getSoldiersMax() + " >P>");
 							send("Max " + empires.get(getIndex(myName)).getDataMax() + " <Science> : "
@@ -780,6 +812,7 @@ public class HexWorldServer {
 											empires.get(getIndex(myName))
 													.addGoods(-1 * empires.get(getIndex(myName)).getSoldiersMax());
 											turnComplete = true;
+											println(" >  " + myName + " used Build Army.");
 										} else
 											sendErr("You cannot afford this upgrade. Use Invest to get more >P>."); // cannot
 																													// afford
@@ -799,6 +832,7 @@ public class HexWorldServer {
 											empires.get(getIndex(myName))
 													.addGoods(-1 * empires.get(getIndex(myName)).getDataMax());
 											turnComplete = true;
+											println(" >  " + myName + " used Build Science.");
 										} else
 											sendErr("You cannot afford this upgrade. Use Invest to get more >P>.");
 									} else
@@ -817,6 +851,7 @@ public class HexWorldServer {
 											empires.get(getIndex(myName))
 													.addGoods(-1 * empires.get(getIndex(myName)).getGoodsMax());
 											turnComplete = true;
+											println(" >  " + myName + " used Build Production.");
 										} else
 											sendErr("You cannot afford this upgrade. Use Invest to get more >P>.");
 									} else
@@ -835,6 +870,7 @@ public class HexWorldServer {
 											empires.get(getIndex(myName))
 													.addGoods(-1 * empires.get(getIndex(myName)).getAccordMax());
 											turnComplete = true;
+											println(" >  " + myName + " used Build Diplomacy.");
 										} else
 											sendErr("You cannot afford this upgrade. Use Invest to get more >P>.");
 									} else
@@ -853,6 +889,7 @@ public class HexWorldServer {
 											empires.get(getIndex(myName))
 													.addGoods(-1 * empires.get(getIndex(myName)).getPowerMax());
 											turnComplete = true;
+											println(" >  " + myName + " used Build Growth.");
 										} else
 											sendErr("You cannot afford this upgrade. Use Invest to get more >P>.");
 									} else
@@ -871,6 +908,7 @@ public class HexWorldServer {
 											empires.get(getIndex(myName))
 													.addGoods(-1 * empires.get(getIndex(myName)).getProgressMax());
 											turnComplete = true;
+											println(" >  " + myName + " used Build Development.");
 										} else
 											sendErr("You cannot afford this upgrade. Use Invest to get more >P>.");
 									} else
@@ -966,6 +1004,7 @@ public class HexWorldServer {
 				if (empires.get(getIndex(myName)).getTerritory() <= 0) {
 					send("YOU HAVE 0 TERRITORY =T= LEFT!");
 					send("Unfortunately, your game is over.");
+					println(" >  Empire " + myName + " lost!");
 					boolean causeFound = false;
 					for (int i = 0; !causeFound; i++) {
 						if (newRecents.get(newRecents.size() - i).contains("Trade Deal")) // If last action was Trade
@@ -1010,6 +1049,7 @@ public class HexWorldServer {
 						}
 						if (i == newRecents.size()) {
 							sendErr("The cause of collapse could not be found. Please report this error.");
+							println("[!] " + myName + " 's cause of collapse couldn't be found.");
 						}
 					}
 					try {
@@ -1022,6 +1062,7 @@ public class HexWorldServer {
 				// Ten-second turn cooldown. Wait ten seconds to take your next move.
 				sendSvr("End of turn information finished.");
 				sendSvr("Time is passing. Your next turn is in 5 seconds.");
+				println(" >  " + myName + " eneded their turn.");
 				try {
 					Thread.sleep(5000);
 				} catch (Exception e) {

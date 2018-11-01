@@ -43,13 +43,48 @@ public class HexWorldServer {
 		public AdminThread() {}
 		
 		public void run() {
-			println("[A] AdminThread ready.");
+			println("{A} AdminThread ready.");
 			while(true)
 			{
-				// TODO Ability to:
+				println("{A} Awaiting action.");
+				String input = new Scanner(System.in).nextLine();
+				String command = input.substring(0,5);
+				String[] arguments = input.substring(5).split("/");
+				// TODO Admin loop:
+				switch (command.substring(0,5))
+				{
+				
 				//  Kick players
+				case "kick/":
+					if (arguments.length == 1) // Correct arg count
+					{
+						if (arguments[0].length() != 0) // Correct first arg length
+						{
+							if (getIndex(arguments[0]) != -1)
+							{
+								println("{A} Kicking Empire " + arguments[0] + " from the game...");
+								
+								empires.get(getIndex(arguments[0])).addTerritory(-1000);
+								empires.get(getIndex(arguments[0])).addEnemyAction("[!] ADMIN KICKED YOU FROM THE GAME");
+								
+								println("{A} Empire " + arguments[0] + " has been removed from the game.");
+							}
+							else // Empire not exist
+								println("{!} Provided Empire does not exist.");
+						}
+						else // Bad first arg
+							println("{!} First argument's length is 0, but should be at least 1.");
+					}
+					else // Bad arg count
+						println("{!} Bad argument count: " + arguments.length + " provided, 1 expected.");
+					break;
 				//  Edit values of each player
+				case "edit/":
+					break;
 				//  Edit world territory
+				case "terr/":
+					break;
+				}
 			}
 		}
 	}
@@ -1006,51 +1041,50 @@ public class HexWorldServer {
 					send("Unfortunately, your game is over.");
 					println(" >  Empire " + myName + " lost!");
 					boolean causeFound = false;
-					for (int i = 0; !causeFound; i++) {
-						if (newRecents.get(newRecents.size() - i).contains("Trade Deal")) // If last action was Trade
-																							// Deal, tell them they were
-																							// bought and peacefully
-																							// joined the other country.
-						{
-							causeFound = true;
-							send("Another Empire bought your remaining land.");
-							// Give a random hint.
-							int randHint = new Random().nextInt(3);
-							switch (randHint) {
-							case 0:
-								send("Next time, keep watch on big Empires likely to be able to afford Trade Deals.");
-								break;
-							case 1:
-								send("Consider allying with mega-Empires to prevent this from happening.");
-								break;
-							case 2:
-								send("Maybe wait until the world resets. You'll get them next time!");
-								break;
+					try {
+						for (int i = 0; !causeFound; i++) {
+							if (newRecents.get(newRecents.size() - i).contains("Trade Deal"))
+							{
+								causeFound = true;
+								send("Another Empire bought your remaining land.");
+								// Give a random hint.
+								int randHint = new Random().nextInt(3);
+								switch (randHint) {
+								case 0:
+									send("Next time, keep watch on big Empires likely to be able to afford Trade Deals.");
+									break;
+								case 1:
+									send("Consider allying with mega-Empires to prevent this from happening.");
+									break;
+								case 2:
+									send("Maybe wait until the world resets. You'll get them next time!");
+									break;
+								}
+							} else if (newRecents.get(newRecents.size() - i).contains("Fight"))
+							{
+								causeFound = true;
+								send("Your Empire was destroyed by another.");
+								// Give a random hint.
+								int randHint = new Random().nextInt(3);
+								switch (randHint) {
+								case 0:
+									send("Try using Treaty on aggressive Empires to force them to stop fighting.");
+									break;
+								case 1:
+									send("If you Trade Deal a warring Empire, you can slow their soldier production.");
+									break;
+								case 2:
+									send("Try making lots of soldiers to counter-attack a dangerous Empire next time.");
+									break;
+								}
 							}
-						} else if (newRecents.get(newRecents.size() - i).contains("Fight")) // If last action was Fight
-																							// against them, tell them
-																							// they were destroyed.
-						{
-							causeFound = true;
-							send("Your Empire was destroyed by another.");
-							// Give a random hint.
-							int randHint = new Random().nextInt(3);
-							switch (randHint) {
-							case 0:
-								send("Try using Treaty on aggressive Empires to force them to stop fighting.");
-								break;
-							case 1:
-								send("Hint: If you Trade Deal a warring Empire, you can slow their soldier production.");
-								break;
-							case 2:
-								send("Try making lots of soldiers to counter-attack a dangerous Empire next time.");
-								break;
+							if (i == newRecents.size()) {
+								sendErr("The cause of collapse could not be found. Please report this error.");
+								println("[!] " + myName + " 's cause of collapse couldn't be found.");
 							}
 						}
-						if (i == newRecents.size()) {
-							sendErr("The cause of collapse could not be found. Please report this error.");
-							println("[!] " + myName + " 's cause of collapse couldn't be found.");
-						}
+					} catch (Exception e) {
+						println("[!] Failed to send a hint to an Empire after they lost.");
 					}
 					try {
 						this.interrupt();
@@ -1071,13 +1105,6 @@ public class HexWorldServer {
 			}
 		}
 
-		// Returns the index of the empire with the given name
-		public static int getIndex(String name) {
-			for (int i = 0; i < empires.size(); i++)
-				if (empires.get(i).getName().equals(name))
-					return i;
-			return -1;
-		}
 
 		public static boolean exists(String name) {
 			for (int i = 0; i < empires.size(); i++)
@@ -1116,6 +1143,14 @@ public class HexWorldServer {
 		}
 	}
 
+	// Returns the index of the empire with the given name
+	public static int getIndex(String name) {
+		for (int i = 0; i < empires.size(); i++)
+			if (empires.get(i).getName().equals(name))
+				return i;
+		return -1;
+	}
+	
 	public static void print(Object obj) {
 		System.out.print(obj.toString());
 	}

@@ -51,38 +51,96 @@ public class HexWorldServer {
 				String command = input.substring(0,5);
 				String[] arguments = input.substring(5).split("/");
 				// TODO Admin loop:
-				switch (command.substring(0,5))
-				{
-				
-				//  Kick players
+				switch (command.substring(0, 5)) {
+
+				// Kick players
 				case "kick/":
 					if (arguments.length == 1) // Correct arg count
 					{
 						if (arguments[0].length() != 0) // Correct first arg length
 						{
-							if (getIndex(arguments[0]) != -1)
-							{
+							if (getIndex(arguments[0]) != -1) {
 								println("{A} Kicking Empire " + arguments[0] + " from the game...");
-								
+
 								empires.get(getIndex(arguments[0])).addTerritory(-1000);
-								empires.get(getIndex(arguments[0])).addEnemyAction("[!] ADMIN KICKED YOU FROM THE GAME");
-								
+								empires.get(getIndex(arguments[0]))
+										.addEnemyAction("[!] ADMIN KICKED YOU FROM THE GAME");
+
 								println("{A} Empire " + arguments[0] + " has been removed from the game.");
-							}
-							else // Empire not exist
+							} else // Empire not exist
 								println("{!} Provided Empire does not exist.");
-						}
-						else // Bad first arg
-							println("{!} First argument's length is 0, but should be at least 1.");
-					}
-					else // Bad arg count
+						} else // Bad first arg
+							println("{!} An argument's length is 0, but should be at least 1.");
+					} else // Bad arg count
 						println("{!} Bad argument count: " + arguments.length + " provided, 1 expected.");
 					break;
-				//  Edit values of each player
-				case "edit/":
+				// Edit values of each player
+				case "edit/": // edit/[empire]/[stat]/[new-value]
+					if (arguments.length == 3)
+					{
+						if (arguments[0].length() != 0 && arguments[1].length() != 0 && arguments[2].length() != 0)
+						{
+							if (getIndex(arguments[0]) != -1)
+							{
+								try {
+									switch (arguments[1]) {
+									case "{S}":
+										empires.get(getIndex(arguments[0])).setSoldiers(Integer.parseInt(arguments[2]));
+										break;
+									case "m{S}":
+										empires.get(getIndex(arguments[0])).setSoldiersMax(Integer.parseInt(arguments[2]));
+										break;
+									case "[D]":
+										empires.get(getIndex(arguments[0])).setData(Integer.parseInt(arguments[2]));
+										break;
+									case "m[D]":
+										empires.get(getIndex(arguments[0])).setDataMax(Integer.parseInt(arguments[2]));
+										break;
+									case "(G)":
+										empires.get(getIndex(arguments[0])).setGoods(Integer.parseInt(arguments[2]));
+										break;
+									case "m(G)":
+										empires.get(getIndex(arguments[0])).setGoodsMax(Integer.parseInt(arguments[2]));
+										break;
+									case "#A#":
+										empires.get(getIndex(arguments[0])).setAccord(Integer.parseInt(arguments[2]));
+										break;
+									case "m#A#":
+										empires.get(getIndex(arguments[0])).setAccordMax(Integer.parseInt(arguments[2]));
+										break;
+									case "!P!":
+										empires.get(getIndex(arguments[0])).setPower(Integer.parseInt(arguments[2]));
+										break;
+									case "m!P!":
+										empires.get(getIndex(arguments[0])).setPowerMax(Integer.parseInt(arguments[2]));
+										break;
+									case ">P>":
+										empires.get(getIndex(arguments[0])).setProgress(Integer.parseInt(arguments[2]));
+										break;
+									case "m>P>":
+										empires.get(getIndex(arguments[0])).setProgressMax(Integer.parseInt(arguments[2]));
+										break;
+									default:
+										println("{!} Provided stat to edit does not exist.");
+										break;
+									}
+								} catch (Exception e) {
+									println("{!} Invalid third argument.");
+								}
+							}
+							else
+								println("{!} Provided Empire does not exist.");
+						}
+						else
+							println("{!} An arguments length is 0, but should be at least 1.");
+					}
+					else
+						println("{!} Bad argument count: " + arguments.length + " provided, 3 expected.");
 					break;
-				//  Edit world territory
+				// TODO Edit world territory
 				case "terr/":
+					if (arguments.length == 1)
+						openLand = Integer.parseInt(arguments[0]);
 					break;
 				}
 			}
@@ -1105,7 +1163,7 @@ public class HexWorldServer {
 			}
 		}
 
-
+		// Checks to see if an empire exists
 		public static boolean exists(String name) {
 			for (int i = 0; i < empires.size(); i++)
 				if (empires.get(i).getName().equals(name))

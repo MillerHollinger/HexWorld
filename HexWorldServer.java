@@ -5,7 +5,6 @@ import java.io.*;
 /*
  TODO LIST
  - Bug testing
- - AdminThread officialization
  - Tell user exact amounts of spending and earning for all actions
  - More world territory?
  IDEAS LIST
@@ -68,11 +67,11 @@ public class HexWorldServer {
 
 								println("{A} Empire " + arguments[0] + " has been removed from the game.");
 							} else // Empire not exist
-								println("{!} Provided Empire does not exist.");
+								println("{!} Invalid arguments. Empire does not exist.");
 						} else // Bad first arg
-							println("{!} An argument's length is 0, but should be at least 1.");
+							println("{!} Invalid arguments. First argument invalid.");
 					} else // Bad arg count
-						println("{!} Bad argument count: " + arguments.length + " provided, 1 expected.");
+						println("{!} Invalid arguments. Argument count incorrect.");
 					break;
 				// Edit values of each player
 				case "edit/": // edit/[empire]/[stat]/[new-value]
@@ -121,21 +120,22 @@ public class HexWorldServer {
 										empires.get(getIndex(arguments[0])).setProgressMax(Integer.parseInt(arguments[2]));
 										break;
 									default:
-										println("{!} Provided stat to edit does not exist.");
+										println("{!} Invalid arguments. Given stat to edit does not exist.");
 										break;
 									}
+									println("{A} Action complete.");
 								} catch (Exception e) {
-									println("{!} Invalid third argument.");
+									println("{!} Invalid arguments.");
 								}
 							}
 							else
-								println("{!} Provided Empire does not exist.");
+								println("{!} Invalid arguments. Given Empire does not exist.");
 						}
 						else
-							println("{!} An arguments length is 0, but should be at least 1.");
+							println("{!} Invalid arguments. Invalid lengths.");
 					}
 					else
-						println("{!} Bad argument count: " + arguments.length + " provided, 3 expected.");
+						println("{!} Invalid arguments. Incorrect argument count.");
 					break;
 				// terr/[number] or terr/[anything...]
 				case "terr/":
@@ -145,12 +145,12 @@ public class HexWorldServer {
 								openLand = Integer.parseInt(arguments[0]);
 								println("{A} Set open land to " + arguments[0]);
 							} else
-								println("{!} First argument is invalid. Should be 0 or above.");
+								println("{!} Invalid arguments. Argument must be above 0.");
 						} catch (Exception e) {
 							println("{A} Open land left: =T= " + openLand);
 						}
 					else
-						println("{!} Invalid argument count. Expected 1.");
+						println("{!} Invalid arguments. Incorrect argument count.");
 					break;
 				}
 			}

@@ -397,7 +397,7 @@ public class HexWorldServer {
 				send("   - <Discover> : - [D] | Spend Data to level-up actions");
 				send(" > LV " + empires.get(getIndex(myName)).getProductionLv() + " PRODUCTION");
 				send("   - <Produce> : + (G) | Gain Goods");
-				send("   - <Trade Deal> :  - (G) | - #A# | - !P! | Buy land from an Empire");
+				send("   - <Trade Deal> :  - (G) | - #A# | - !P! | Buy land directly from an Empire");
 				send(" > LV " + empires.get(getIndex(myName)).getDiplomacyLv() + " DIPLOMACY");
 				send("   - <Negotiate> : + #A# | Gain Accord");
 				send("   - <Treaty> : - #A# | Target Empire cannot use Fight for two turns");
@@ -807,7 +807,8 @@ public class HexWorldServer {
 						if (empires.get(getIndex(myName)).getPower() < empires.get(getIndex(myName)).getPowerMax()) {
 							empires.get(getIndex(myName)).addPower(empires.get(getIndex(myName)).getTerritory()
 									* empires.get(getIndex(myName)).getGrowthLv());
-							send("You now have " + empires.get(getIndex(myName)).getPower() + " Power !P!.");
+							send("You now have " + empires.get(getIndex(myName)).getPower()
+									+ " !P! / " + empires.get(getIndex(myName)).getPowerMax());
 							turnComplete = true;
 							println(" >  " + myName + " used Govern.");
 						} else

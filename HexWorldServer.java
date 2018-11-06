@@ -3,9 +3,15 @@ import java.net.*;
 import java.io.*;
 
 /*
- TO-DO LIST
+ TODO LIST
+ - Fight removes end-turn delay?
+ - Empire level not displaying correctly
+ - Discover and Build not working correctly
+ - Build requires exact amounts?
+ - Build does not spend the resource
+ 
  - Bug testing
- - AdminThread
+ - AdminThread officialization
  - Tell user exact amounts of spending and earning for all actions
  - More world territory?
  IDEAS LIST
@@ -137,10 +143,20 @@ public class HexWorldServer {
 					else
 						println("{!} Bad argument count: " + arguments.length + " provided, 3 expected.");
 					break;
-				// TODO Edit world territory
+				// terr/[number] or terr/[anything...]
 				case "terr/":
 					if (arguments.length == 1)
-						openLand = Integer.parseInt(arguments[0]);
+						try {
+							if (Integer.parseInt(arguments[0]) > 0) {
+								openLand = Integer.parseInt(arguments[0]);
+								println("{A} Set open land to " + arguments[0]);
+							} else
+								println("{!} First argument is invalid. Should be 0 or above.");
+						} catch (Exception e) {
+							println("{A} Open land left: =T= " + openLand);
+						}
+					else
+						println("{!} Invalid argument count. Expected 1.");
 					break;
 				}
 			}
@@ -152,10 +168,10 @@ public class HexWorldServer {
 		private Socket socket;
 
 		// The printwriter for this socket.
-		static private PrintWriter printer;
+		private PrintWriter printer;
 
 		// The reader for this socket.
-		static private BufferedReader reader;
+		private BufferedReader reader;
 
 		// User input is stored here if it will be re-read later.
 		private String in;
@@ -255,7 +271,6 @@ public class HexWorldServer {
 					sendSvr("Close enough...");
 			}
 		}
-
 		// The run() function for each thread. The main for each user.
 		public void run() {
 			// Intro
@@ -899,11 +914,12 @@ public class HexWorldServer {
 												.getSoldiersMax()) {
 											send("Success. Spending >P> to upgrade Soldier {S} maximum.");
 											empires.get(getIndex(myName))
+											.addProgress(-1 * empires.get(getIndex(myName)).getSoldiersMax());
+											empires.get(getIndex(myName))
 													.setSoldiersMax(empires.get(getIndex(myName)).getSoldiersMax() * 5);
 											send("You now have Max " + empires.get(getIndex(myName)).getSoldiersMax()
 													+ " Soldiers {S}.");
-											empires.get(getIndex(myName))
-													.addGoods(-1 * empires.get(getIndex(myName)).getSoldiersMax());
+											
 											turnComplete = true;
 											println(" >  " + myName + " used Build Army.");
 										} else
@@ -919,11 +935,11 @@ public class HexWorldServer {
 												.getDataMax()) {
 											send("Success. Spending >P> to upgrade Data [D] maximum.");
 											empires.get(getIndex(myName))
+											.addProgress(-1 * empires.get(getIndex(myName)).getDataMax());
+											empires.get(getIndex(myName))
 													.setDataMax(empires.get(getIndex(myName)).getDataMax() * 5);
 											send("You now have Max " + empires.get(getIndex(myName)).getSoldiersMax()
 													+ " Data [D].");
-											empires.get(getIndex(myName))
-													.addGoods(-1 * empires.get(getIndex(myName)).getDataMax());
 											turnComplete = true;
 											println(" >  " + myName + " used Build Science.");
 										} else
@@ -938,11 +954,11 @@ public class HexWorldServer {
 												.getGoodsMax()) {
 											send("Success. Spending >P> to upgrade Goods (G) maximum.");
 											empires.get(getIndex(myName))
+											.addProgress(-1 * empires.get(getIndex(myName)).getGoodsMax());
+											empires.get(getIndex(myName))
 													.setGoodsMax(empires.get(getIndex(myName)).getGoodsMax() * 5);
 											send("You now have Max " + empires.get(getIndex(myName)).getGoodsMax()
 													+ " Goods (G).");
-											empires.get(getIndex(myName))
-													.addGoods(-1 * empires.get(getIndex(myName)).getGoodsMax());
 											turnComplete = true;
 											println(" >  " + myName + " used Build Production.");
 										} else
@@ -957,11 +973,11 @@ public class HexWorldServer {
 												.getAccordMax()) {
 											send("Success. Spending >P> to upgrade Accord #A# maximum.");
 											empires.get(getIndex(myName))
+											.addProgress(-1 * empires.get(getIndex(myName)).getAccordMax());
+											empires.get(getIndex(myName))
 													.setAccordMax(empires.get(getIndex(myName)).getAccordMax() * 5);
 											send("You now have Max " + empires.get(getIndex(myName)).getAccordMax()
 													+ " Accord #A#.");
-											empires.get(getIndex(myName))
-													.addGoods(-1 * empires.get(getIndex(myName)).getAccordMax());
 											turnComplete = true;
 											println(" >  " + myName + " used Build Diplomacy.");
 										} else
@@ -976,11 +992,12 @@ public class HexWorldServer {
 												.getPowerMax()) {
 											send("Success. Spending >P> to upgrade Power !P! maximum.");
 											empires.get(getIndex(myName))
+											.addProgress(-1 * empires.get(getIndex(myName)).getPowerMax());
+											empires.get(getIndex(myName))
 													.setPowerMax(empires.get(getIndex(myName)).getPowerMax() * 5);
 											send("You now have Max " + empires.get(getIndex(myName)).getPowerMax()
 													+ " Power !P!.");
-											empires.get(getIndex(myName))
-													.addGoods(-1 * empires.get(getIndex(myName)).getPowerMax());
+											
 											turnComplete = true;
 											println(" >  " + myName + " used Build Growth.");
 										} else
@@ -995,11 +1012,11 @@ public class HexWorldServer {
 												.getProgressMax()) {
 											send("Success. Spending >P> to upgrade Progress >P> maximum.");
 											empires.get(getIndex(myName))
+											.addProgress(-1 * empires.get(getIndex(myName)).getProgressMax());
+											empires.get(getIndex(myName))
 													.setProgressMax(empires.get(getIndex(myName)).getProgressMax() * 5);
 											send("You now have Max " + empires.get(getIndex(myName)).getProgressMax()
 													+ " Progress >P>.");
-											empires.get(getIndex(myName))
-													.addGoods(-1 * empires.get(getIndex(myName)).getProgressMax());
 											turnComplete = true;
 											println(" >  " + myName + " used Build Development.");
 										} else
@@ -1154,7 +1171,7 @@ public class HexWorldServer {
 				// Ten-second turn cooldown. Wait ten seconds to take your next move.
 				sendSvr("End of turn information finished.");
 				sendSvr("Time is passing. Your next turn is in 5 seconds.");
-				println(" >  " + myName + " eneded their turn.");
+				println(" >  " + myName + " ended their turn.");
 				try {
 					Thread.sleep(5000);
 				} catch (Exception e) {
@@ -1173,7 +1190,7 @@ public class HexWorldServer {
 
 		// Method that displays the list of all empires, their territory owned, level,
 		// and alignment.
-		public static void displayEmpires() {
+		public void displayEmpires() {
 			send("# - - - Empire List - - - #");
 			for (int i = 0; i < empires.size(); i++)
 				send(" LV " + empires.get(i).empireLv() + " - " + empires.get(i).getName() + " "
@@ -1181,22 +1198,22 @@ public class HexWorldServer {
 			send("# - - - - - - - - - - - - #");
 		}
 
-		public static String getInput() throws Exception {
+		public String getInput() throws Exception {
 			return reader.readLine();
 		}
 
 		// Sends a message to the user from the server, using [>].
-		public static void sendSvr(Object o) {
+		public void sendSvr(Object o) {
 			printer.println("[>] " + o.toString());
 		}
 
 		// Sends an error message, using [!].
-		public static void sendErr(Object o) {
+		public void sendErr(Object o) {
 			printer.println("[!] " + o.toString());
 		}
 
 		// Sends a generic message. No prefix.
-		public static void send(Object o) {
+		public void send(Object o) {
 			printer.println(o.toString());
 		}
 	}

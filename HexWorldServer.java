@@ -4,12 +4,6 @@ import java.io.*;
 
 /*
  TODO LIST
- - Fight removes end-turn delay?
- - Empire level not displaying correctly
- - Discover and Build not working correctly
- - Build requires exact amounts?
- - Build does not spend the resource
- 
  - Bug testing
  - AdminThread officialization
  - Tell user exact amounts of spending and earning for all actions
@@ -599,11 +593,16 @@ public class HexWorldServer {
 									+ empires.get(getIndex(myName)).costArray()[4] + " [D]");
 							send("LV " + empires.get(getIndex(myName)).getDevelopmentLv() + " <Development> : "
 									+ empires.get(getIndex(myName)).costArray()[5] + " [D]");
+							send("<Quit> to quit.");
 							try {
 								// Spend Data for the levelup for that action
 								// 1: 10; 2: 50, 3: 250; 4: 1250; 5: 6050; 6: 30250
 								// Upgrade the level of that action
 								switch (getInput()) {
+								case "Quit":
+								case "quit":
+									send("Returning to main.");
+									break;
 								case "Army":
 								case "army":
 									if (empires.get(getIndex(myName)).upgrade(0)) {
@@ -903,14 +902,19 @@ public class HexWorldServer {
 									+ empires.get(getIndex(myName)).getPowerMax() + " >P>");
 							send("Max " + empires.get(getIndex(myName)).getProgressMax() + " <Development> : "
 									+ empires.get(getIndex(myName)).getProgressMax() + " >P>");
+							send("<Quit> to quit.");
 							// Spend Progress to increase the limit of that resource
 							// 10>50: 10; 50>250: 50; 250>1250: 250; 1250>6250: 1250; 6250>30250: 1250
 							try {
 								switch (getInput()) {
+								case "Quit":
+								case "quit":
+									send("Returning to main.");
+									break;
 								case "Army":
 								case "army":
 									if (empires.get(getIndex(myName)).getSoldiersMax() < 30000) {
-										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
+										if (empires.get(getIndex(myName)).getProgress() >= empires.get(getIndex(myName))
 												.getSoldiersMax()) {
 											send("Success. Spending >P> to upgrade Soldier {S} maximum.");
 											empires.get(getIndex(myName))
@@ -931,7 +935,7 @@ public class HexWorldServer {
 								case "Science":
 								case "science":
 									if (empires.get(getIndex(myName)).getDataMax() < 30000) {
-										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
+										if (empires.get(getIndex(myName)).getProgress() >= empires.get(getIndex(myName))
 												.getDataMax()) {
 											send("Success. Spending >P> to upgrade Data [D] maximum.");
 											empires.get(getIndex(myName))
@@ -950,7 +954,7 @@ public class HexWorldServer {
 								case "Production":
 								case "production":
 									if (empires.get(getIndex(myName)).getGoodsMax() < 30000) {
-										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
+										if (empires.get(getIndex(myName)).getProgress() >= empires.get(getIndex(myName))
 												.getGoodsMax()) {
 											send("Success. Spending >P> to upgrade Goods (G) maximum.");
 											empires.get(getIndex(myName))
@@ -969,7 +973,7 @@ public class HexWorldServer {
 								case "Diplomacy":
 								case "diplomacy":
 									if (empires.get(getIndex(myName)).getAccordMax() < 30000) {
-										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
+										if (empires.get(getIndex(myName)).getProgress() >= empires.get(getIndex(myName))
 												.getAccordMax()) {
 											send("Success. Spending >P> to upgrade Accord #A# maximum.");
 											empires.get(getIndex(myName))
@@ -988,7 +992,7 @@ public class HexWorldServer {
 								case "Growth":
 								case "growth":
 									if (empires.get(getIndex(myName)).getPowerMax() < 30000) {
-										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
+										if (empires.get(getIndex(myName)).getProgress() >= empires.get(getIndex(myName))
 												.getPowerMax()) {
 											send("Success. Spending >P> to upgrade Power !P! maximum.");
 											empires.get(getIndex(myName))
@@ -1008,7 +1012,7 @@ public class HexWorldServer {
 								case "Development":
 								case "development":
 									if (empires.get(getIndex(myName)).getProgressMax() < 30000) {
-										if (empires.get(getIndex(myName)).getProgress() == empires.get(getIndex(myName))
+										if (empires.get(getIndex(myName)).getProgress() >= empires.get(getIndex(myName))
 												.getProgressMax()) {
 											send("Success. Spending >P> to upgrade Progress >P> maximum.");
 											empires.get(getIndex(myName))

@@ -230,7 +230,7 @@ public class Empire {
 			return false;
 	}
 	
-	// Returns the total level of this empire's upgrades, i.e. the sum of all levels past one. 1 2 3 4 5 6 = 15. Maximum is thus 30.
+	// Returns the total level of this empire's upgrades, i.e. the sum of all levels past one. 1 2 3 3 5 4 = 12. Maximum is thus 30.
 	public int empireLv()
 	{
 		return (int) (armyLv + scienceLv + productionLv + diplomacyLv + growthLv + developmentLv) - 6;

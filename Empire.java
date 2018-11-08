@@ -77,7 +77,13 @@ public class Empire {
 		
 		treatied = 0;
 	}
-
+	
+	// Territory bonus. Log(terr) = bonus
+	public int getTerrBonus()
+	{
+		return (int) Math.log(territory * 1.0);
+	}
+	
 	// Attempts to treaty this player. If accord >= territory, it succeeds.
 	public boolean treaty(int accord)
 	{	
@@ -90,7 +96,7 @@ public class Empire {
 		return false;
 	}
 	
-	// TODO The actual words of this player's alignment.
+	// The actual words of this player's alignment.
 	public String getAlignText() {
 		String out = "";
 		
@@ -242,7 +248,7 @@ public class Empire {
 		age++;
 	}
 	
-	// TODO Bonus getters. +0, +1, +2, or +3.
+	// Bonus getters. +0, +1, +2, or +3.
 	public int warmonger()
 	{
 		switch (pacWar) {

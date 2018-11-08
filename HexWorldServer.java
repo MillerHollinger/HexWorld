@@ -4,6 +4,9 @@ import java.io.*;
 
 /*
  TODO LIST
+ - Trade Deal does not work
+ - Alignment points should now allocate correctly? (TEST)
+ 
  - Bug testing
  - Tell user exact amounts of spending and earning for all actions
  - More world territory?
@@ -16,6 +19,8 @@ public class HexWorldServer {
 	// These variables are accessible to all ServerThreads. These are global server
 	// information.
 
+	public static final String version = "v0.9.12";
+	
 	// All connected sockets.
 	public static ArrayList<Socket> sockets = new ArrayList<Socket>();
 
@@ -23,7 +28,7 @@ public class HexWorldServer {
 	public static ArrayList<Empire> empires = new ArrayList<Empire>();
 
 	// Available land.
-	public static int openLand = 1000;
+	public static int openLand = 100000;
 
 	public static void main(String[] args) throws Exception {
 		@SuppressWarnings("resource")
@@ -61,7 +66,7 @@ public class HexWorldServer {
 							if (getIndex(arguments[0]) != -1) {
 								println("{A} Kicking Empire " + arguments[0] + " from the game...");
 
-								empires.get(getIndex(arguments[0])).addTerritory(-1000);
+								empires.get(getIndex(arguments[0])).addTerritory(-1000000);
 								empires.get(getIndex(arguments[0]))
 										.addEnemyAction("[!] ADMIN KICKED YOU FROM THE GAME");
 
@@ -212,7 +217,7 @@ public class HexWorldServer {
 							+ "Each category has one action that earns the assosciated resource and another that uses it somehow. Some actions may require two or more resource types to function.\n"
 							+ "At the beginning, you can only hold 10 of each; but as you grow that will rapidly change.\n"
 							+ "Send <Next> to continue.\n",
-					"The main goal of the game is to acquire Territory =T=. Territory is limited; there are only 1000 in the world. You can only conquer unowned Territory.\n"
+					"The main goal of the game is to acquire Territory =T=. Territory is limited; there are only 100000 in the world. You can only conquer unowned Territory.\n"
 							+ "Each Territory increases the amount of resources you gain from actions, so get lots of it.\n"
 							+ "At some point, all the Territory may be controlled. You will have to resort to destroying other empires to loosen their control or buy the land directly.\n"
 							+ "Send <Next> to continue.\n",
@@ -236,9 +241,9 @@ public class HexWorldServer {
 					"Every turn, you will pick an action. Then, you wait 5 seconds for time to pass.\n"
 							+ "Your actions change how your empire is aligned. There are four bonuses, which are in two sets of opposites.\n"
 							+ "-: Warmonger: Fight to gain a Warmonger point. +1 Soldier/Territory when Train is used. (Opposite is Pacifist)\n"
-							+ "+: Pacifist: Don't Fight or Train for three turns. +1 Good/Territory when Produce is used. (Opposite is Warmonger)\n"
-							+ "=: Involved: Use Negotiate three times in a row. +1 Progress/Territory when Invest is used. (Opposite is Isolationist)\n"
-							+ "~: Isolationist: Don't use Negotiate for six turns in a row. +1 Data/Territory when Research is used. (Opposite is Involved)\n"
+							+ "+: Pacifist: Don't Fight or Train for nine turns. +1 Good/Territory when Produce is used. (Opposite is Warmonger)\n"
+							+ "=: Involved: Use Negotiate four times in a row. +1 Progress/Territory when Invest is used. (Opposite is Isolationist)\n"
+							+ "~: Isolationist: Don't use Negotiate for twelve turns in a row. +1 Data/Territory when Research is used. (Opposite is Involved)\n"
 							+ "Your points are displayed as a series of symbols. 2 Pacifist points plus 3 Involved points equals ++===; 3 Warmonger points only equals ---; 1 Pacifist point and two Isolationist points equals +; etc. \n"
 							+ "Gaining opposite points negates what you already have, e.g. if you have 3 Warmonger points and gain 1 Pacifist point the result is 2 Warmonger points (3 - 1 = 2), if you have 1 Involved point and you gain 2 Isolationist points the result is 1 Isolationist point.\n"
 							+ "You start with no points. They are valuable, complete their requirements for a good bonus reward. You can only have up to 3 of any single bonus, however.\n"
@@ -271,7 +276,7 @@ public class HexWorldServer {
 			// Welcome the user to the game.
 			println(" >  Thread executed run().");
 			sendSvr("Successfully connected to server!");
-			sendSvr("HexWorld v0.9.9");
+			sendSvr("HexWorld " + version);
 			sendSvr("   >By Miller Hollinger");
 			// Offer a tutorial.
 			send("Would you like to read the Tutorial? <Yes>/<No>");
@@ -670,8 +675,7 @@ public class HexWorldServer {
 										sendErr("You cannot afford this upgrade. Use Research to get more [D] and Build to increase limits.");
 									break;
 								default:
-									sendErr("The upgrade was not typed correctly. Please assure correct spelling and capitalization and retry."); // input
-																																					// error
+									sendErr("The upgrade was not typed correctly. Please assure correct spelling and capitalization and retry."); // input																									// error
 									break;
 								}
 							} catch (Exception e) {
@@ -691,7 +695,7 @@ public class HexWorldServer {
 							empires.get(getIndex(myName))
 									.addGoods((empires.get(getIndex(myName)).getProductionLv()
 											+ empires.get(getIndex(myName)).pacifist())
-											* empires.get(getIndex(myName)).getTerritory());
+											* empires.get(getIndex(myName)).getTerrBonus());
 							send("You now have " + empires.get(getIndex(myName)).getGoods() + " (G) / "
 									+ empires.get(getIndex(myName)).getGoodsMax());
 							turnComplete = true;
@@ -727,7 +731,7 @@ public class HexWorldServer {
 									send("You bought " + maxBuy + " =T= from the target Empire.");
 									empires.get(getIndex(myName)).addTerritory(maxBuy / 10);
 									empires.get(getIndex(target))
-											.addEnemyAction("Trade Deal - Lost " + maxBuy + " =T= - " + myName);
+											.addEnemyAction("Trade Deal - Sold " + maxBuy + " =T= - " + myName);
 									empires.get(getIndex(target)).addTerritory(maxBuy / -10);
 									turnComplete = true;
 									println(" >  " + myName + " used Trade Deal on " + target + ".");
@@ -735,7 +739,7 @@ public class HexWorldServer {
 									if (!target.equalsIgnoreCase(myName))
 										sendErr("That Empire does not exist. Try again."); // inexistent empire
 									else
-										sendErr("You can't attack yourself!");
+										sendErr("You can't use Trade Deal on yourself!");
 								}
 							} catch (Exception e) {
 								sendErr("There was an issue getting input. Please try again."); // input error
@@ -779,6 +783,7 @@ public class HexWorldServer {
 										// Target cannot use Fight for the next two turns
 										// Accord -= Target's Territory
 										send("Succesfully used Treaty. The other Empire cannot use Fight for two turns.");
+										empires.get(getIndex(myName)).setAccord(empires.get(getIndex(myName)).getAccord() - empires.get(getIndex(target)).getTerritory());
 										empires.get(getIndex(target)).addEnemyAction("Treaty - " + myName);
 										turnComplete = true;
 										println(" >  " + myName + " used Treaty on " + target + ".");
@@ -790,7 +795,7 @@ public class HexWorldServer {
 									if (!target.equalsIgnoreCase(myName))
 										sendErr("That Empire does not exist. Try again."); // inexistent empire
 									else
-										sendErr("You can't attack yourself!");
+										sendErr("You can't Treaty yourself!");
 								}
 							} catch (Exception e) {
 								sendErr("There was an issue getting input. Please try again."); // input error
@@ -805,7 +810,7 @@ public class HexWorldServer {
 					case "govern":
 						send("You have chosen to Govern your Empire.");
 						if (empires.get(getIndex(myName)).getPower() < empires.get(getIndex(myName)).getPowerMax()) {
-							empires.get(getIndex(myName)).addPower(empires.get(getIndex(myName)).getTerritory()
+							empires.get(getIndex(myName)).addPower(empires.get(getIndex(myName)).getTerrBonus()
 									* empires.get(getIndex(myName)).getGrowthLv());
 							send("You now have " + empires.get(getIndex(myName)).getPower()
 									+ " !P! / " + empires.get(getIndex(myName)).getPowerMax());
@@ -817,7 +822,7 @@ public class HexWorldServer {
 					// Conquer
 					case "Conquer":
 					case "conquer":
-						send("You have chosen to Conquer Territory");
+						send("You have chosen to Conquer Territory.");
 						if (empires.get(getIndex(myName)).getPower() >= 10) {
 							if (openLand > 0) {
 								int conquerable = Math.min(empires.get(getIndex(myName)).getPower() / 10, openLand);
@@ -1051,8 +1056,7 @@ public class HexWorldServer {
 				// Tally points under Warmonger, Pacifist, Isolationist, and Involved to see if
 				// the stance changes.
 				ArrayList<String> myRecent = empires.get(getIndex(myName)).getActions();
-				if (in.equalsIgnoreCase("Fight") && empires.get(getIndex(myName)).getPacWar() < 3
-						&& empires.get(getIndex(myName)).getPacWar() > -3) // Gain Warmonger
+				if (in.equalsIgnoreCase("Fight") && empires.get(getIndex(myName)).getPacWar() > -3) // Gain Warmonger
 																			// point
 																			// (-1)
 				{
@@ -1066,24 +1070,37 @@ public class HexWorldServer {
 							&& !myRecent.toArray()[myRecent.toArray().length - 2].equals("Train")
 							&& !myRecent.toArray()[myRecent.toArray().length - 3].equals("Fight")
 							&& !myRecent.toArray()[myRecent.toArray().length - 3].equals("Train")
+							&& !myRecent.toArray()[myRecent.toArray().length - 4].equals("Fight")
+							&& !myRecent.toArray()[myRecent.toArray().length - 4].equals("Train")
+							&& !myRecent.toArray()[myRecent.toArray().length - 5].equals("Fight")
+							&& !myRecent.toArray()[myRecent.toArray().length - 5].equals("Train")
+							&& !myRecent.toArray()[myRecent.toArray().length - 6].equals("Fight")
+							&& !myRecent.toArray()[myRecent.toArray().length - 6].equals("Train")
+							&& !myRecent.toArray()[myRecent.toArray().length - 7].equals("Fight")
+							&& !myRecent.toArray()[myRecent.toArray().length - 7].equals("Train")
+							&& !myRecent.toArray()[myRecent.toArray().length - 8].equals("Fight")
+							&& !myRecent.toArray()[myRecent.toArray().length - 8].equals("Train")
+							&& !myRecent.toArray()[myRecent.toArray().length - 9].equals("Fight")
+							&& !myRecent.toArray()[myRecent.toArray().length - 9].equals("Train")
 							&& empires.get(getIndex(myName)).getPacWar() < 3) // Gain Pacifist
 																				// point
 																				// (+1)
 					{
-						send("For not using Fight or Train in the last 3 turns, you recieve +1 Pacifist Point (-1 Warmonger Point).");
+						send("For not using Fight or Train in the last 9 turns, you recieve +1 Pacifist Point (-1 Warmonger Point).");
 						empires.get(getIndex(myName)).setPacWar(empires.get(getIndex(myName)).getPacWar() + 1);
 					}
 				} catch (Exception e) {
 				}
 				try {
-					if (!myRecent.toArray()[myRecent.toArray().length - 1].equals("Negotiate")
-							&& !myRecent.toArray()[myRecent.toArray().length - 2].equals("Negotiate")
-							&& !myRecent.toArray()[myRecent.toArray().length - 3].equals("Negotiate")
+					if (myRecent.toArray()[myRecent.toArray().length - 1].equals("Negotiate")
+							&& myRecent.toArray()[myRecent.toArray().length - 2].equals("Negotiate")
+							&& myRecent.toArray()[myRecent.toArray().length - 3].equals("Negotiate")
+							&& myRecent.toArray()[myRecent.toArray().length - 4].equals("Negotiate")
 							&& empires.get(getIndex(myName)).getInvIso() < 3) // Gain Involved
 																				// point
 																				// (+1)
 					{
-						send("For using Negotiate for the last 3 turns, you recieve +1 Involved Point (-1 Isolationist Point).");
+						send("For using Negotiate for the last 4 turns, you recieve +1 Involved Point (-1 Isolationist Point).");
 						empires.get(getIndex(myName)).setInvIso(empires.get(getIndex(myName)).getInvIso() + 1);
 					}
 				} catch (Exception e) {
@@ -1095,11 +1112,17 @@ public class HexWorldServer {
 							&& !myRecent.toArray()[myRecent.toArray().length - 4].equals("Negotiate")
 							&& !myRecent.toArray()[myRecent.toArray().length - 5].equals("Negotiate")
 							&& !myRecent.toArray()[myRecent.toArray().length - 6].equals("Negotiate")
+							&& !myRecent.toArray()[myRecent.toArray().length - 7].equals("Negotiate")
+							&& !myRecent.toArray()[myRecent.toArray().length - 8].equals("Negotiate")
+							&& !myRecent.toArray()[myRecent.toArray().length - 9].equals("Negotiate")
+							&& !myRecent.toArray()[myRecent.toArray().length - 10].equals("Negotiate")
+							&& !myRecent.toArray()[myRecent.toArray().length - 11].equals("Negotiate")
+							&& !myRecent.toArray()[myRecent.toArray().length - 12].equals("Negotiate")
 							&& empires.get(getIndex(myName)).getInvIso() > -3) // Gain
 																				// Isolationist
 																				// point (-1)
 					{
-						send("For not using Negotiate for the last 6 turns, you recieve +1 Isolationist Point (-1 Involved Point).");
+						send("For not using Negotiate for the last 12 turns, you recieve +1 Isolationist Point (-1 Involved Point).");
 						empires.get(getIndex(myName)).setInvIso(empires.get(getIndex(myName)).getInvIso() - 1);
 					}
 				} catch (Exception e) {
@@ -1177,6 +1200,9 @@ public class HexWorldServer {
 				sendSvr("End of turn information finished.");
 				sendSvr("Time is passing. Your next turn is in 5 seconds.");
 				println(" >  " + myName + " ended their turn.");
+				if (empires.get(getIndex(myName)).getTreatied() > 0)
+						empires.get(getIndex(myName)).setTreatied(empires.get(getIndex(myName)).getTreatied() - 1);
+				
 				try {
 					Thread.sleep(5000);
 				} catch (Exception e) {

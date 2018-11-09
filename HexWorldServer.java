@@ -6,6 +6,7 @@ import java.io.*;
  TODO LIST
  - Trade Deal does not work
  - Alignment points should now allocate correctly? (TEST)
+ - Variable turn times
  
  - Bug testing
   
@@ -53,7 +54,7 @@ public class HexWorldServer {
 				String input = new Scanner(System.in).nextLine();
 				String command = input.substring(0,5);
 				String[] arguments = input.substring(5).split("/");
-				// TODO Admin loop:
+				// Admin loop:
 				switch (command.substring(0, 5)) {
 
 				// Kick players
@@ -694,7 +695,7 @@ public class HexWorldServer {
 							empires.get(getIndex(myName))
 									.addGoods((empires.get(getIndex(myName)).getProductionLv()
 											+ empires.get(getIndex(myName)).pacifist())
-											* empires.get(getIndex(myName)).getTerrBonus());
+											* (empires.get(getIndex(myName)).getTerrBonus() + 1));
 							send("You now have " + empires.get(getIndex(myName)).getGoods() + " (G) / "
 									+ empires.get(getIndex(myName)).getGoodsMax());
 							turnComplete = true;
@@ -706,9 +707,9 @@ public class HexWorldServer {
 					case "Trade Deal":
 					case "trade deal":
 						send("You have decided to make a Trade Deal with another Empire.");
-						if (empires.get(getIndex(myName)).getGoods() > 10
-								&& empires.get(getIndex(myName)).getAccord() > 10
-								&& empires.get(getIndex(myName)).getPower() > 10) {
+						if (empires.get(getIndex(myName)).getGoods() >= 10
+								&& empires.get(getIndex(myName)).getAccord() >= 10
+								&& empires.get(getIndex(myName)).getPower() >= 10) {
 							try {
 								// Select another empire
 								send("Please enter the name of an Empire to buy =T= from."); // Shouldn't be able to buy
@@ -809,7 +810,7 @@ public class HexWorldServer {
 					case "govern":
 						send("You have chosen to Govern your Empire.");
 						if (empires.get(getIndex(myName)).getPower() < empires.get(getIndex(myName)).getPowerMax()) {
-							empires.get(getIndex(myName)).addPower(empires.get(getIndex(myName)).getTerrBonus()
+							empires.get(getIndex(myName)).addPower((empires.get(getIndex(myName)).getTerrBonus() + 1)
 									* empires.get(getIndex(myName)).getGrowthLv());
 							send("You now have " + empires.get(getIndex(myName)).getPower()
 									+ " !P! / " + empires.get(getIndex(myName)).getPowerMax());

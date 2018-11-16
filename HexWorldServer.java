@@ -7,6 +7,7 @@ import java.io.*;
  - Trade Deal does not work
  - Alignment points should now allocate correctly? (TEST)
  - Variable turn times
+ - Admin thread -- provide confirmation of all commands
  
  - Bug testing
   
